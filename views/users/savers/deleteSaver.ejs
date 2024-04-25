@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fontawesome -->
+    <script
+      src="https://kit.fontawesome.com/42a182743f.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/form.css" />
+    <title>Delete Saver</title>
+  </head>
+  <body>
+    <!-- nav -->
+    <%-include('../partials/navbar.ejs') %>
+    <div class="form-container">
+      <!-- icon -->
+      <h1>
+        Delete Saver
+        <!-- delete icon -->
+        <i class="fas fa-trash"></i>
+      </h1>
+      <%if(error){%>
+      <small class="error">
+        <i class="fas fa-exclamation-circle"></i>
+        <%=error%>
+      </small>
+      <%}%>
+      <form action="/api/v1/savers/<%=userId%>/<%=postId%>" method="DELETE">
+        <p>Are you sure you want to remove this post from your saver?</p>
+        <button type="submit">Confirm Delete</button>
+      </form>
+    </div>
+    <!-- footer -->
+    <%-include('../partials/footer.ejs') %>
+  </body>
+</html>

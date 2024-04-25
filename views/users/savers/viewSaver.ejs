@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fontawesome -->
+    <script
+        src="https://kit.fontawesome.com/42a182743f.js"
+        crossorigin="anonymous"
+    ></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/saver.css" />
+    <style>
+        body {
+            background-color: #f2f2f2; /* 设置背景色 */
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .saver-container {
+            width: 60%; /* 设置宽度 */
+            margin: 20px auto; /* 居中 */
+            padding: 20px;
+            background-color: #ffffff; /* 设置背景色 */
+            border-radius: 10px; /* 设置圆角 */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* 设置阴影 */
+        }
+
+        .saver-list {
+            margin-top: 20px;
+        }
+
+        .saver-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .saver-item:last-child {
+            border-bottom: none;
+        }
+
+        .saver-item p {
+            margin: 0;
+        }
+
+        .saver-item a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .saver-form {
+            display: inline;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+    <title>My Favorites</title>
+</head>
+<body>
+    <!-- nav -->
+    <%- include('../../partials/navbar.ejs') %>
+    <div class="saver-container">
+        <!-- icon -->
+        <h1>
+            My Favorites
+            <!-- bookmark icon -->
+            <i class="fas fa-bookmark"></i>
+        </h1>
+        <% if(error){ %>
+            <small class="error">
+                <i class="fas fa-exclamation-circle"></i>
+                <%= error %>
+            </small>
+        <% } %>
+        <div class="saver-list">
+            <% savers.forEach(post => { %>
+                <div class="saver-item">
+                    <!-- Display post title and create a hyperlink to the post -->
+                    <p>🌟Post Title: <a href="<%= post.link %>"><%= post.title %></a></p>
+                    <!-- The link to the post -->
+                    <a href="<%= post.link %>"  style="color: #ff5a5f;"">Continue 👀</a>
+                    <form action="/api/v1/users/savers/<%= post.user %>/<%= post._id %>" method="DELETE" class="saver-form" data-userid="<%= post.user %>" data-postid="<%= post._id %>">
+                    </form>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    <!-- footer -->
+    <%- include('../../partials/footer.ejs') %>
+</body>
+</html>

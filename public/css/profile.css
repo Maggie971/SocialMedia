@@ -1,0 +1,159 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f2f2f2;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.profile-container header {
+  padding: 20px;
+  border-bottom: 1px solid #e6e6e6;
+  height: 30vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+
+.profile-img img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  position: absolute;
+  margin-top: -20px;
+}
+
+.profile-img .fas {
+  position: absolute;
+  margin-top: 30px;
+  margin-left: 80px;
+  font-size: 20px;
+  color: #fff;
+  background-color: #1da1f2;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.profile-container .icons-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 20vh;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.profile-container .icons-container .fas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  color: #00fb4f;
+  font-size: 25px;
+  margin-right: 10px;
+}
+
+.personal-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: auto;
+  margin-right: auto;
+  flex-direction: column;
+  background-color: #fff;
+  width: 40%;
+  padding: 20px;
+  margin-top: 80px;
+}
+
+.profile-container .details {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: row;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.details-wrapper {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.details .fas {
+  margin-right: 10px;
+  color: #1da1f2;
+}
+
+.address-container h2,
+.address-container p {
+  font-size: 18px;
+  font-weight: normal;
+  display: inline; /* 让标题和个人信息都在同一行上 */
+}
+
+/* 修改 latest-post-title 的字体大小 */
+.latest-post-title h1 {
+  font-size: 24px;
+}
+
+/* 调整按钮样式 */
+#getAndUploadAddressBtn {
+  background-color: #c49bb6; /* 修改按钮颜色 */
+  color: #fff; /* 文字颜色 */
+  padding: 8px 16px; /* 调整按钮内边距 */
+  border: none; /* 去掉按钮边框 */
+  border-radius: 5px; /* 圆角 */
+  cursor: pointer;
+  margin-top: 20px; /* 水平居中 */
+  margin-left: auto; /* 水平居中 */
+  margin-right: auto; /* 水平居中 */
+}
+
+/* 调整 Latest Posts 标题和最新帖子的间距 */
+.latest-post-title {
+  margin-top: 40px;
+}
+
+.post-content {
+  margin-bottom: 40px;
+}
+
+/* 让标题和个人信息都在同一行上 */
+.address-container h2,
+.address-container p {
+  font-size: 18px;
+  font-weight: normal;
+  display: inline;
+}
+
+/* 修改按钮样式 */
+#edit-bio-btn,
+#save-bio-btn {
+  background-color: #c49bb6; /* 修改按钮颜色 */
+  color: white; /* 文字颜色 */
+  padding: 5px 10px; /* 调整按钮内边距 */
+  border: none; /* 去掉按钮边框 */
+  border-radius: 5px; /* 圆角 */
+  cursor: pointer;
+  margin-top: 5px; /* 增加按钮与上方元素的间距 */
+}
+
+/* 让编辑按钮换行 */
+.details .edit-btn {
+  flex-wrap: wrap; /* 允许编辑按钮换行 */
+}
