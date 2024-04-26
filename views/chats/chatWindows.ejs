@@ -12,50 +12,117 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/postDetails.css" />
   <link rel="stylesheet" href="/css/chat.css" /> <!-- Add custom CSS for chat -->
+  <style>
+/* 聊天框样式 */
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 500px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* 消息样式 */
+.message {
+  display: flex;
+  align-items: center;
+  max-width: 60%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* 左侧消息样式 */
+.message-left {
+  align-self: flex-start;
+  background-color: #f0f0f0;
+}
+
+/* 右侧消息样式 */
+.message-right {
+  align-self: flex-end;
+  background-color: #9fecb8;
+  flex-direction: row-reverse;
+}
+
+/* 头像样式 */
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0 10px;
+}
+
+/* 消息内容样式 */
+.message-content {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* 时间样式 */
+.message-time {
+  font-size: 10px;
+  color: #888;
+  align-self: flex-end;
+}
+
+/* 发送消息表单样式 */
+.chat-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+/* 消息输入框样式 */
+#message-input {
+  flex-grow: 1;
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+  </style>
   <title>Chat with Author</title>
 </head>
 <body>
-  <!-- Chat messages -->
   <div class="chat-messages" id="chat-messages">
     <% for (let chat of chats) { %>
       <div class="message <%= chat.fromUser._id.equals(userAuth) ? 'message-right' : 'message-left' %>">
         <div class="message-info">
           <img class="profile-image" src="<%= chat.fromUser.profileImage %>" alt="<%= chat.fromUser.fullname %>" />
-          <p><%= chat.fromUser.fullname %></p>
-          <p class="message-time"><%= formatDate(chat.createdAt) %></p>
         </div>
         <div class="message-content">
+          <p class="message-time"><%= chat.createdAt %></p>
           <p><%= chat.message %></p>
         </div>
       </div>
     <% } %>
   </div>
-
+  
   <form id="chat-form" class="chat-form">
     <div class="input-container">
-      <input type="file" id="image-input" name="image" accept="image/*">
       <textarea id="message-input" name="message" placeholder="Type a message..."></textarea>
     </div>
-    <button type="button" id="send-btn">Send</button>
+    <button type="submit" id="send-btn">Send</button>
   </form>
-  
-  
-
   <script>
-    // 创建 WebSocket 连接
-    const ws = new WebSocket('ws://localhost:8080');
-
-    // 获取URL中的作者ID
-    const urlParams = new URLSearchParams(window.location.search);
-    const authorID = urlParams.get('authorID');
-
+    const ws = new WebSocket('ws://localhost:8987');
+    
+    const userId = window.location.pathname.split('/').pop(); // 获取路由参数中的 userId
+    
     const currentUser = {
       _id: '<%= userAuth %>'
     };
-
+    
     const chatMessages = document.getElementById('chat-messages');
-
-    // Function to add a new message to the chat
+    
     const appendMessage = (message, isCurrentUser) => {
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message');
@@ -66,61 +133,63 @@
       }
       messageDiv.innerHTML = `<p>${message}</p>`;
       chatMessages.appendChild(messageDiv);
-      // Scroll to the bottom of the chat messages
       chatMessages.scrollTop = chatMessages.scrollHeight;
     };
-
+    
     const handleFormSubmit = (e) => {
-  console.log('Form submitted'); // 添加日志
-  e.preventDefault();
-  const messageInput = document.getElementById('message-input');
-  const message = messageInput.value.trim();
-  const imageInput = document.getElementById('image-input');
-  const image = imageInput.files[0];
-  
-  const formData = {
-    fromUser: currentUser._id,
-    toUser: authorID,
-    message: message,
-    messageType: 'text'
-  };
-
-  console.log('Form data:', formData); // 添加日志
-  
-  if (image) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      formData.messageType = 'image';
-      formData.message = reader.result; // Base64 encoded image data
-      console.log('Form data with image:', formData); // 添加日志
+      e.preventDefault();
+      const formData = new FormData(document.getElementById('chat-form'));
+      const messageInput = document.getElementById('message-input').value;
+      formData.append('fromUser', currentUser._id);
+      formData.append('toUser', userId);
+      formData.append('message', messageInput);
+      console.log('fromUser:', currentUser._id);
+      console.log('toUser:', userId);
       sendMessage(formData);
     };
-    reader.readAsDataURL(image);
-  } else {
-    console.log('Form data without image:', formData); // 添加日志
-    sendMessage(formData);
-  }
+    
+    const sendMessage = (formData) => {
+  const formDataObject = {};
+  formData.forEach((value, key) => {
+    formDataObject[key] = value;
+  });
+
+  const options = {
+    method: 'POST',
+    body: JSON.stringify(formDataObject),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  fetch('/api/v1/chats', options)
+    .then(response => response.json())
+    .then(data => {
+      console.log('Message sent:', data);
+      appendMessage(data.message, true);
+      document.getElementById('message-input').value = '';
+    })
+    .catch(error => {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again later.');
+    });
 };
 
-
-// 提取发送消息的函数
-const sendMessage = (data) => {
-  // 发送消息到服务器
-  ws.send(JSON.stringify(data));
-};
-
-
-    // Event listener for form submission (sending a message)
+    
     const chatForm = document.getElementById('chat-form');
     chatForm.addEventListener('submit', handleFormSubmit);
-
-    // 监听来自服务器的消息
+    
     ws.addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
       if (message.message) {
         appendMessage(message.message, false);
       }
     });
+    
+    window.addEventListener('beforeunload', () => {
+      ws.close();
+    });
+    
   </script>
 </body>
 </html>

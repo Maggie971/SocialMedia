@@ -31,6 +31,7 @@ postRoutes.get("/get-form-update/:id", async (req, res) => {
   }
 });
 
+
 // 创建帖子
 postRoutes.post("/", protected, upload.single("file"), createPostCtrl);
 
