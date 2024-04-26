@@ -8,7 +8,6 @@ const globalErrHandler = require("./middlewares/globalHandler");
 const commentRoutes = require("./routes/comments/comment");
 const postRoutes = require("./routes/posts/posts");
 const userRoutes = require("./routes/users/users");
-const friendsRoutes = require("./routes/friends/friends"); 
 const Chat = require("./model/chat/Chat");
 const mongoose = require("mongoose");
 const Post = require("./model/post/Post");
@@ -156,7 +155,6 @@ app.get("/", async (req, res) => {
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
-app.use("/api/v1/friends", friendsRoutes);
 
 app.use(globalErrHandler);
 

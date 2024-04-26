@@ -23,6 +23,7 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 10px;
+  background-color: #c49bb6;
 }
 
 /* 消息样式 */
@@ -44,7 +45,7 @@
 /* 右侧消息样式 */
 .message-right {
   align-self: flex-end;
-  background-color: #9fecb8;
+  background-color: #FFDD68;
   flex-direction: row-reverse;
 }
 
@@ -94,7 +95,7 @@
 <body>
   <div class="chat-messages" id="chat-messages">
     <% for (let chat of chats) { %>
-      <div class="message <%= chat.fromUser._id.equals(userAuth) ? 'message-right' : 'message-left' %>">
+      <div class="message <%= chat.fromUser.fullname === 'David' ? 'message-right' : 'message-left' %>">
         <div class="message-info">
           <img class="profile-image" src="<%= chat.fromUser.profileImage %>" alt="<%= chat.fromUser.fullname %>" />
         </div>
@@ -127,8 +128,10 @@
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message');
       if (isCurrentUser) {
+        // console.log("===test1===");
         messageDiv.classList.add('message-right');
       } else {
+        // console.log("===test2===");
         messageDiv.classList.add('message-left');
       }
       messageDiv.innerHTML = `<p>${message}</p>`;
@@ -181,6 +184,7 @@
     
     ws.addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
+      // console.log(message.message);
       if (message.message) {
         appendMessage(message.message, false);
       }
