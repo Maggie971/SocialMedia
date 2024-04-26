@@ -62,7 +62,7 @@
     width: 60px; /* Adjust width as needed */
     padding: 10px;
     border: none;
-    background-color: #a9568c;
+    background-color: #007bff;
     color: #fff;
     border-radius: 5px;
     cursor: pointer;
@@ -70,6 +70,6 @@
   
   /* Send button hover effect */
   #send-btn:hover {
-    background-color: #c49bb6;
+    background-color: #0056b3;
   }
   

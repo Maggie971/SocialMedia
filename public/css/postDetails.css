@@ -261,7 +261,7 @@ aside {
   border-radius: 5px;
   font-size: 1.2rem;
   cursor: pointer;
-  display: inline-block; /* 添加此行使按钮水平居中 */
+  display: inline-block; 
 }
 .chat-button {
   text-align: center;
@@ -277,8 +277,25 @@ aside {
   border-radius: 5px;
   font-size: 1.2rem;
   cursor: pointer;
-  display: inline-block; /* 添加此行使按钮水平居中 */
+  display: inline-block; 
 
+}
+
+.add-button {
+  text-align: center;
+  margin-top: 20px;
+  
+}
+
+#add-friend-btn {
+  background-color: #c49bb6;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: inline-block; 
 }
 
 .common-button {
