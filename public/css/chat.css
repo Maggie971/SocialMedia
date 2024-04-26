@@ -26,10 +26,9 @@
   
   /* Message bubble */
   .message p {
-    background-color: #f0f0f0;
-    padding: 10px;
+    /* padding: 10px; */
     border-radius: 10px;
-    max-width: 70%;
+    /* max-width: 70%; */
   }
   
   /* Chat input form */
@@ -62,7 +61,7 @@
     width: 60px; /* Adjust width as needed */
     padding: 10px;
     border: none;
-    background-color: #007bff;
+    background-color: #a9586C;
     color: #fff;
     border-radius: 5px;
     cursor: pointer;
@@ -70,6 +69,5 @@
   
   /* Send button hover effect */
   #send-btn:hover {
-    background-color: #0056b3;
+    background-color: #c49bb6;
   }
-  
