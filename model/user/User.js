@@ -33,8 +33,14 @@ const userSchema = new mongoose.Schema({
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-  chats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chat" }], // 新添加的字段用于存储用户的聊天
+  chats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chat" }],
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
+  // friendRequests: [{
+  //   sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  //   status: { type: String, enum: ["pending", "accepted", "rejected"] }
+  // }],
 }, { timestamps: true });
+
 
 const User = mongoose.model("User", userSchema);
 

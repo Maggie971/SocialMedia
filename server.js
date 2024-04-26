@@ -8,6 +8,7 @@ const globalErrHandler = require("./middlewares/globalHandler");
 const commentRoutes = require("./routes/comments/comment");
 const postRoutes = require("./routes/posts/posts");
 const userRoutes = require("./routes/users/users");
+const friendsRoutes = require("./routes/friends/friends"); 
 const Chat = require("./model/chat/Chat");
 const mongoose = require("mongoose");
 const Post = require("./model/post/Post");
@@ -60,7 +61,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// 设置 Multer 中间件以处理文件上传
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -71,37 +71,77 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
-app.post("/chats", upload.single('messageImage'), async (req, res) => {
+app.post("/api/v1/chats", async (req, res) => {
   try {
-    const { fromUser, toUser, postId, messageText, messageType } = req.body;
-    let message;
+    const { fromUser, toUser, message } = req.body;
+    const messageType = 'text'; // 强制消息类型为"text"
 
-    // 如果消息类型是图片，则将图片文件保存到服务器，并将图片路径作为消息内容
-    if (messageType === 'image' && req.file) {
-      // 处理上传的图片文件
-      const imagePath = req.file.path;
-      message = imagePath;
-    } else {
-      // 否则，消息内容就是文本消息
-      message = messageText;
-    }
-
-    // 创建聊天记录并保存到数据库
-    const chat = await Chat.create({
+    // 创建新的聊天记录
+    const newChat = await Chat.create({
       fromUser,
       toUser,
-      postId,
       message,
       messageType,
     });
 
-    // 返回创建的聊天记录
-    res.json({ message: chat.message });
+    res.json({ message: newChat.message });
   } catch (error) {
     console.error('Error processing message:', error);
     res.status(500).json({ error: 'Failed to process message' });
   }
+});
+
+app.get("/api/v1/posts", async (req, res) => {
+  try {
+    const posts = await Post.find().populate("user");
+    res.render("index", { posts });
+  } catch (error) {
+    res.render("index", { error: error.message });
+  }
+});
+
+app.get("/api/v1/chats/chatWindows/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const chats = await Chat.getChatsByUserId(userId);
+    res.render("chats/chatWindows", { chats });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+wss.on("connection", (ws) => {
+  ws.on("message", async (data) => {
+    try {
+      // 添加对数据类型的检查
+      if (typeof data === 'string') {
+        const { fromUser, toUser, message, messageType } = JSON.parse(data);
+        const chat = await Chat.create({
+          fromUser,
+          toUser,
+          message,
+          messageType,
+        });
+        wss.clients.forEach((client) => {
+          if (client !== ws && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(chat));
+          }
+        });
+      } else {
+        console.error("Invalid data type received:", typeof data);
+      }
+    } catch (error) {
+      console.error("Error processing message:", error);
+    }
+  });
+
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error);
+  });
+
+  ws.on("close", () => {
+    console.log("WebSocket connection closed");
+  });
 });
 
 app.get("/", async (req, res) => {
@@ -113,55 +153,10 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/chats/chatWindows", async (req, res) => {
-  try {
-    // 从查询参数中获取用户的 ID
-    const userId = req.query.userId;
-
-    // 获取特定用户的聊天记录
-    const chats = await Chat.getChatsByUserId(userId);
-
-    // 将获取到的聊天记录传递给模板文件
-    res.render("chats/chatWindows", { chats });
-  } catch (error) {
-    // 如果发生错误，可以渲染一个错误页面或者返回一个错误消息
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-// WebSocket connection handler
-wss.on("connection", (ws) => {
-  // Handle incoming messages
-  ws.on("message", async (message) => {
-    try {
-      // Process the message and save it to the database
-      const parsedMessage = JSON.parse(message);
-      const { fromUser, toUser, postId, messageText, messageType } = parsedMessage;
-      
-      // Save the message to the database
-      const chat = await Chat.create({
-        fromUser,
-        toUser,
-        postId,
-        message: messageText,
-        messageType,
-      });
-
-      // Broadcast the message to all clients
-      wss.clients.forEach((client) => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(chat));
-        }
-      });
-    } catch (error) {
-      console.error("Error processing message:", error);
-    }
-  });
-});
-
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/friends", friendsRoutes);
 
 app.use(globalErrHandler);
 
@@ -170,7 +165,6 @@ server.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
 });
 
-// Connect to the database
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

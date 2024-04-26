@@ -95,12 +95,14 @@ const fetchPostCtrl = async (req, res, next) => {
       .populate("user");
     res.render("posts/postDetails", {
       post,
+      authorID: post.user._id, // 将作者的 ID 传递给模板
       error: "",
     });
   } catch (error) {
     next(appErr(error.message));
   }
 };
+
 
 //delete
 const deletePostCtrl = async (req, res, next) => {

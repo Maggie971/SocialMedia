@@ -96,8 +96,5 @@ userRoutes.post("/upload-address", protected, uploadAddressCtrl);
 // POST /api/v1/users/update-bio
 userRoutes.post("/update-bio", protected, updateBioCtrl);
 
-// Chat Routes
-const chatRoutes = require("../chats/chats"); // 正确引入 chats.js 文件
-userRoutes.use("/chats", chatRoutes);
 
 module.exports = userRoutes;
